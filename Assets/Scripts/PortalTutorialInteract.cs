@@ -1,31 +1,40 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro; // Si usas TextMeshPro
 
 public class PortalInteract : MonoBehaviour
 {
-    public string Game; // Nombre de la escena a cargar
+    public string sceneToLoad;          // Nombre de la escena a cargar
+    public GameObject portalPrompt;     // Referencia al texto UI
     private bool playerInRange = false; // Si el jugador está cerca del portal
 
     void Update()
     {
-        // Si el jugador está en rango y presiona la tecla X
-        if (playerInRange && Input.GetKeyDown(KeyCode.X))
+        // Mostrar el mensaje si el jugador está cerca
+        if (playerInRange)
         {
-            SceneManager.LoadScene(Game);
+            portalPrompt.SetActive(true);
+
+            // Cambiar de escena al pulsar X
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                SceneManager.LoadScene(sceneToLoad);
+            }
+        }
+        else
+        {
+            portalPrompt.SetActive(false); // Oculta el mensaje si no está cerca
         }
     }
 
-    // Detectar cuando el jugador entra en el rango del portal
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
             playerInRange = true;
-            Debug.Log("Jugador cerca del portal");
         }
     }
 
-    // Detectar cuando el jugador sale del rango
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
