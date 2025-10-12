@@ -8,10 +8,12 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded = false;
     private bool facingRight = true; //saber hacia donde mira el jugador
 
-
+    [Header("Animacion")]
+    private Animator animator;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -39,6 +41,14 @@ public class PlayerMovement : MonoBehaviour
         {
             Flip();
         }
+
+        //Animacion
+        float speed = Mathf.Abs(moveInput);
+        animator.SetFloat("Speed", speed); // correr o idle
+
+        animator.SetBool("isJumping", !isGrounded); // saltando o en el suelo
+        animator.SetBool("isGrounded", isGrounded);
+
 
     }
 
