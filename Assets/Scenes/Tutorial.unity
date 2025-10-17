@@ -526,7 +526,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!224 &587484767
 RectTransform:
@@ -544,7 +544,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 322, y: -130.83499}
+  m_AnchoredPosition: {x: 255, y: -97}
   m_SizeDelta: {x: 119.28638, y: 49.120102}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &587484768
@@ -562,6 +562,7 @@ MonoBehaviour:
   vida: {fileID: 1830299768}
   targetImage: {fileID: 587484769}
   spritesPorVida:
+  - {fileID: 21300000, guid: 715ecc6799a63704dae0828fd8e8793f, type: 3}
   - {fileID: 21300000, guid: 41bf8a19c251b98449ba6b2d274c3264, type: 3}
   - {fileID: 21300000, guid: a78ccb24c8dd42d4985ad189fddfb283, type: 3}
   - {fileID: 21300000, guid: da43dd5732a0afe4f8e458adf1ab16f5, type: 3}
@@ -1372,8 +1373,8 @@ Canvas:
   m_GameObject: {fileID: 1270771482}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 1264761537}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -1474,7 +1475,7 @@ Canvas:
   m_GameObject: {fileID: 1306711760}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 1264761537}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -2333,6 +2334,7 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1270771486}
   - {fileID: 1306711764}
   - {fileID: 1451498526}
   - {fileID: 1321622472}
@@ -2346,4 +2348,3 @@ SceneRoots:
   - {fileID: 886973312}
   - {fileID: 1779519593}
   - {fileID: 1263949026}
-  - {fileID: 1270771486}
