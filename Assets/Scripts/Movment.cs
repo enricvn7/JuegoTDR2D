@@ -24,6 +24,12 @@ public class PlayerMovement : MonoBehaviour
     [Header("Animación")]
     private Animator animator;
 
+    // --- ADD: Wall fix variables ---
+    [Header("Wall Fix Settings")]
+    public LayerMask wallMask;
+    public float wallCheckDistance = 0.3f;
+    public float wallPushForce = 3f;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -58,6 +64,9 @@ public class PlayerMovement : MonoBehaviour
         {
             StartCoroutine(DoDash());
         }
+
+        // --- Wall Stuck Fix ---
+        CheckWallStuck(moveInput);
 
         // --- Animaciones ---
         float speed = Mathf.Abs(moveInput);
@@ -111,5 +120,19 @@ public class PlayerMovement : MonoBehaviour
 
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
+    }
+
+    // --- ADD: Wall Fix Method ---
+    private void CheckWallStuck(float moveInput)
+    {
+        // Cast ray to detect wall in front
+        Vector2 direction = facingRight ? Vector2.right : Vector2.left;
+        RaycastHit2D hitWall = Physics2D.Raycast(transform.position, direction, wallCheckDistance, wallMask);
+
+        if (hitWall.collider != null && Mathf.Abs(moveInput) > 0.1f)
+        {
+            // Small push away from wall to prevent sticking
+            rb.AddForce(-direction * wallPushForce, ForceMode2D.Force);
+        }
     }
 }
