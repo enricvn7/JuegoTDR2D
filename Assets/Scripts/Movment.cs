@@ -122,7 +122,7 @@ public class PlayerMovement : MonoBehaviour
         canDash = true;
     }
 
-    // --- ADD: Wall Fix Method ---
+    // --- FIXED: Wall Fix Method ---
     private void CheckWallStuck(float moveInput)
     {
         // Cast ray to detect wall in front
