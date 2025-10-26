@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System.Collections;
+
 
 public class Portal : MonoBehaviour
 {
@@ -21,9 +23,8 @@ public class Portal : MonoBehaviour
     void Update()
     {
         if (jugadorCerca && Input.GetKeyDown(KeyCode.X))
-        {
-            SceneManager.LoadScene(nombreEscena);
-        }
+    StartCoroutine(CambiarEscena());
+
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -45,4 +46,12 @@ public class Portal : MonoBehaviour
                 textoUI.SetActive(false);
         }
     }
+
+    IEnumerator CambiarEscena()
+{
+    // Aquí podrías poner animación o fade
+    yield return new WaitForSeconds(0.5f);
+    SceneManager.LoadScene(nombreEscena);
+}
+
 }
