@@ -38592,7 +38592,7 @@ MonoBehaviour:
   maxJumps: 2
   wallMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   wallCheckDistance: 0.3
   wallPushForce: 3
 --- !u!61 &1830299763
