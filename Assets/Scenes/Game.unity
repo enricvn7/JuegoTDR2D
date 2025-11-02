@@ -307,7 +307,7 @@ Transform:
   m_GameObject: {fileID: 428259891}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 107.16587, y: 55.935997, z: -5}
+  m_LocalPosition: {x: 107.320404, y: 55.935997, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -419,7 +419,7 @@ MonoBehaviour:
   maxJumps: 2
   wallMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   wallCheckDistance: 0.3
   wallPushForce: 3
 --- !u!61 &1003682217
@@ -432,7 +432,7 @@ BoxCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 5b580abc88027cb42826db39c3f13a9d, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -759,7 +759,7 @@ Transform:
   m_GameObject: {fileID: 1137405080}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 107.16587, y: 55.935997, z: -5}
+  m_LocalPosition: {x: 107.320404, y: 55.935997, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -882,7 +882,7 @@ GameObject:
   - component: {fileID: 1484180586}
   - component: {fileID: 1484180585}
   - component: {fileID: 1484180584}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Tilemap
   m_TagString: ground
   m_Icon: {fileID: 0}
@@ -952,7 +952,7 @@ CompositeCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 5b580abc88027cb42826db39c3f13a9d, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
