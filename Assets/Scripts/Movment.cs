@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private bool isGrounded = false;
     private bool facingRight = true;
+    private bool isTouchingCeiling = false;
 
     [Header("Animación")]
     private Animator animator;
@@ -49,11 +50,12 @@ public class PlayerMovement : MonoBehaviour
 
         // --- Salto y doble salto ---
         if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumps)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); // reinicia la velocidad vertical para consistencia
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            jumpCount++;
-        }
+            if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumps && !isTouchingCeiling)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); // reinicia la velocidad vertical para consistencia
+                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                jumpCount++;
+            }
 
         // --- Flip del sprite ---
         if (moveInput > 0 && !facingRight) Flip();
@@ -61,9 +63,10 @@ public class PlayerMovement : MonoBehaviour
 
         // --- Dash ---
         if (Input.GetKeyDown(KeyCode.F) && canDash)
-        {
-            StartCoroutine(DoDash());
-        }
+            if (Input.GetKeyDown(KeyCode.F) && canDash && !isTouchingCeiling)
+            {
+                StartCoroutine(DoDash());
+            }
 
         // --- Wall Stuck Fix ---
         CheckWallStuck(moveInput);
@@ -91,6 +94,11 @@ public class PlayerMovement : MonoBehaviour
             isGrounded = true;
             jumpCount = 0; // Reinicia los saltos al tocar el suelo
         }
+
+        if (IsCeilingCollision(collision))
+        {
+            isTouchingCeiling = true;
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -98,6 +106,16 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("ground"))
         {
             isGrounded = false;
+        }
+
+        isTouchingCeiling = false;
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (IsCeilingCollision(collision))
+        {
+            isTouchingCeiling = true;
         }
     }
 
@@ -135,4 +153,18 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(-direction * wallPushForce, ForceMode2D.Force);
         }
     }
+
+    private bool IsCeilingCollision(Collision2D collision)
+    {
+        foreach (ContactPoint2D contact in collision.contacts)
+        {
+            if (contact.normal.y < -0.5f)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
+
