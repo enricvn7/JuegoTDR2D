@@ -1,4 +1,8 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -39,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+
         if (isDashing) return;
 
         // --- Movimiento horizontal ---
@@ -166,5 +171,22 @@ public class PlayerMovement : MonoBehaviour
 
         return false;
     }
+    public void ApplyKnockback(Vector2 direction, float force)
+{
+    StartCoroutine(KnockbackCoroutine(direction, force));
+}
+
+private IEnumerator KnockbackCoroutine(Vector2 direction, float force)
+{
+    // Cancelar dash si está activo (opcional)
+    isDashing = false;
+
+    // Aplicar velocidad de knockback
+    rb.linearVelocity = new Vector2(direction.x * force, direction.y * (force / 2f));
+
+    // Pequeño delay antes de devolver control
+    yield return new WaitForSeconds(0.15f);
+}
+
 }
 

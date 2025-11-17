@@ -31,6 +31,8 @@ public class BeeAI : MonoBehaviour
     Vector2 patrolTarget;
     float nextWaypointTime = 0f;
 
+    public float knockbackForce = 5f;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -127,6 +129,14 @@ public class BeeAI : MonoBehaviour
             {
                 nextAttackTime = Time.time + attackCooldown;
                 vida.RecibirDanio(damage);
+                // KNOCKBACK
+                var pm = player.GetComponent<PlayerMovement>();
+                if (pm != null)
+                {
+                Vector2 knockDir = (player.position - transform.position).normalized;
+                pm.ApplyKnockback(knockDir, knockbackForce);
+                }
+
             }
         }
     }
@@ -171,4 +181,5 @@ public class BeeAI : MonoBehaviour
 
         return vida;
     }
+    
 }
