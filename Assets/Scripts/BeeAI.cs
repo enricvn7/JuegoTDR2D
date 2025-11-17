@@ -6,7 +6,9 @@ public class BeeAI : MonoBehaviour
 {
     [Header("Referencias")]
     public Transform player;
-    Vida playerVida;                 
+    Vida playerVida;
+    Rigidbody2D playerRb;
+    PlayerMovement playerMovement;               
     Rigidbody2D rb;
     Animator anim;
     SpriteRenderer sr;
@@ -27,6 +29,10 @@ public class BeeAI : MonoBehaviour
     public float contactDamageRadius = 0.4f; 
     float nextAttackTime = 0f;
 
+    [Header("Empuje al impactar")]
+    public float knockbackForceToPlayer = 6f;
+    public float knockbackForceToBee = 2f;
+
     Vector2 startPos;
     Vector2 patrolTarget;
     float nextWaypointTime = 0f;
@@ -45,7 +51,7 @@ public class BeeAI : MonoBehaviour
         }
 
         if (player != null)
-            playerVida = player.GetComponent<Vida>();
+            CachePlayerComponents();
 
         ChooseNewPatrolPoint();
     }
@@ -127,6 +133,7 @@ public class BeeAI : MonoBehaviour
             {
                 nextAttackTime = Time.time + attackCooldown;
                 vida.RecibirDanio(damage);
+                ApplyMutualKnockback();
             }
         }
     }
@@ -150,6 +157,7 @@ public class BeeAI : MonoBehaviour
         {
             vida.RecibirDanio(damage);
             nextAttackTime = Time.time + attackCooldown;
+            ApplyMutualKnockback();
         }
 
     }
@@ -166,9 +174,55 @@ public class BeeAI : MonoBehaviour
         if (vida == null && player != null && col.transform == player)
             vida = player.GetComponent<Vida>();
 
-        if (playerVida == null && vida != null && vida.transform == player)
-            playerVida = vida;
+        if (vida != null && vida.transform == player)
+        {
+            if (playerVida == null)
+                playerVida = vida;
+
+            if (playerRb == null)
+                playerRb = player.GetComponent<Rigidbody2D>();
+
+            if (playerMovement == null)
+                playerMovement = player.GetComponent<PlayerMovement>();
+        }
 
         return vida;
     }
+    void CachePlayerComponents()
+    {
+        if (player == null) return;
+
+        playerVida = player.GetComponent<Vida>();
+        playerRb = player.GetComponent<Rigidbody2D>();
+        playerMovement = player.GetComponent<PlayerMovement>();
+    }
+
+    void ApplyMutualKnockback()
+    {
+        if (player == null) return;
+
+        if (playerMovement == null)
+            playerMovement = player.GetComponent<PlayerMovement>();
+
+        if (playerRb == null)
+            playerRb = player.GetComponent<Rigidbody2D>();
+
+        Vector2 dir = (player.position - transform.position);
+        if (dir.sqrMagnitude < 0.0001f)
+            dir = Vector2.up;
+        else
+            dir.Normalize();
+
+        if (knockbackForceToPlayer > 0f)
+        {
+            if (playerMovement != null)
+                playerMovement.ApplyKnockback(dir * knockbackForceToPlayer);
+            else if (playerRb != null)
+                playerRb.AddForce(dir * knockbackForceToPlayer, ForceMode2D.Impulse);
+        }
+
+        if (rb != null && knockbackForceToBee > 0f)
+            rb.AddForce(-dir * knockbackForceToBee, ForceMode2D.Impulse);
+    }
+
 }
