@@ -2844,9 +2844,10 @@ GameObject:
   - component: {fileID: 1227612065}
   - component: {fileID: 1227612067}
   - component: {fileID: 1227612066}
-  m_Layer: 3
-  m_Name: IsGroundedDetector
-  m_TagString: isGrounded
+  - component: {fileID: 1227612068}
+  m_Layer: 0
+  m_Name: groundCheck
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2860,8 +2861,8 @@ Transform:
   m_GameObject: {fileID: 1227612064}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.258, y: -6.4, z: 0}
-  m_LocalScale: {x: 4.5037007, y: 1.7914331, z: 1}
+  m_LocalPosition: {x: 0.421, y: -6.264, z: 0}
+  m_LocalScale: {x: 7.2217803, y: 1.5190414, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1830299766}
@@ -2876,7 +2877,7 @@ BoxCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: 5b580abc88027cb42826db39c3f13a9d, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -2967,6 +2968,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1227612068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1227612064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03a310f875b019c4ebf44ab4ec6cd98b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1264761533
 GameObject:
   m_ObjectHideFlags: 0
@@ -3152,9 +3168,9 @@ GameObject:
   - component: {fileID: 1283973115}
   - component: {fileID: 1283973114}
   - component: {fileID: 1283973116}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: Tilemap
-  m_TagString: ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -51539,6 +51555,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 15
   jumpForce: 35
+  nombreEscenaDestino: Game
+  mensajeInteractuar: {fileID: 0}
   dashSpeed: 35
   dashDuration: 0.2
   dashCooldown: 0.2
@@ -51548,6 +51566,7 @@ MonoBehaviour:
     m_Bits: 128
   wallCheckDistance: 0.3
   wallPushForce: 3
+  groundCheck: {fileID: 1227612068}
 --- !u!61 &1830299763
 BoxCollider2D:
   m_ObjectHideFlags: 0
