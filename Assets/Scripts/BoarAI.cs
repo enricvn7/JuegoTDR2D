@@ -5,6 +5,11 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Rigidbody2D))]
 public class BoarAI : MonoBehaviour
 {
+    
+    [SerializeField] private float vida;
+
+    private Animator animator;
+    
     [Header("Referencias")]
     public Transform player;          // Se puede auto-buscar por tag "Player"
     Vida playerVida;
@@ -36,6 +41,27 @@ public class BoarAI : MonoBehaviour
     Vector2 startPos;
     bool movingRight = true;
     bool isChasing = false;
+
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
+
+    public void TomarDaño(float daño)
+    {
+        vida -= daño;
+        if (vida <= 0)
+        {
+            // Aquí puedes añadir animación de muerte, efectos, etc.
+            Muerte();
+        }
+    }
+
+    private void Muerte()
+    {
+        // Destruir el objeto del jabalí
+        animator.SetTrigger("Muerte");
+    }
 
     void Awake()
     {
