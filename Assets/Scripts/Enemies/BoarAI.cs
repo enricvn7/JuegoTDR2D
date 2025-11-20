@@ -155,7 +155,6 @@ public class BoarAI : MonoBehaviour
             {
                 nextAttackTime = Time.time + attackCooldown;
                 vida.RecibirDanio(damage);
-                ApplyMutualKnockback();
             }
         }
     }
@@ -170,7 +169,6 @@ public class BoarAI : MonoBehaviour
         {
             nextAttackTime = Time.time + attackCooldown;
             vida.RecibirDanio(damage);
-            ApplyMutualKnockback();
         }
     }
 
@@ -206,34 +204,7 @@ public class BoarAI : MonoBehaviour
         playerRb   = player.GetComponent<Rigidbody2D>();
     }
 
-    void ApplyMutualKnockback()
-    {
-        if (player == null) return;
-
-        if (playerRb == null)
-            playerRb = player.GetComponent<Rigidbody2D>();
-
-        Vector2 dir = (player.position - transform.position);
-        if (dir.sqrMagnitude < 0.0001f)
-            dir = Vector2.right;
-        else
-            dir.Normalize();
-
-        // Empuje al jugador
-        if (playerRb != null && knockbackForceToPlayer > 0f)
-        {
-            playerRb.linearVelocity = Vector2.zero;
-            playerRb.AddForce(dir * knockbackForceToPlayer, ForceMode2D.Impulse);
-        }
-
-        // Empuje contrario al Boar
-        if (rb != null && knockbackForceToBoar > 0f)
-        {
-            rb.linearVelocity = Vector2.zero;
-            rb.AddForce(-dir * knockbackForceToBoar, ForceMode2D.Impulse);
-        }
-    }
-
+    
     // ------------ ANIMACIÓN ------------
 
     void UpdateAnimator(float speedAbs)

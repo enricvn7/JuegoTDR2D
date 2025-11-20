@@ -54,4 +54,6 @@ public class BoarDamage : MonoBehaviour
         var rb = other.attachedRigidbody;
         return rb != null ? rb.GetComponent<Vida>() : null;
     }
+
+    
 }

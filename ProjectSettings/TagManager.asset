@@ -18,8 +18,8 @@ TagManager:
   - Wall
   - Enemy
   - Ceiling
-  - 
-  - 
+  - PlayerAttack
+  - Powers
   - 
   - 
   - 

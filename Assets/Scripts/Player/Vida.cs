@@ -26,26 +26,35 @@ public class Vida : MonoBehaviour
         NotificarVida();
     }
 
-    public void RecibirDanio(int cantidad)
+    // Método original: sin fuente, igual que antes
+public void RecibirDanio(int cantidad)
+{
+    if (EstaMuerto || invulnerable || cantidad <= 0) return;
+
+    vidaActual = Mathf.Max(vidaActual - cantidad, 0);
+    onDanio?.Invoke(cantidad);
+    NotificarVida();
+
+    if (vidaActual <= 0)
     {
-        if (EstaMuerto || invulnerable || cantidad <= 0) return;
-
-        vidaActual = Mathf.Max(vidaActual - cantidad, 0);
-        onDanio?.Invoke(cantidad);
-        NotificarVida();
-
-        if (vidaActual <= 0)
-        {
-            EstaMuerto = true;
-            onMuerte?.Invoke();
-        }
-        else if (tiempoInvulnerable > 0f)
-        {
-            if (!gameObject.activeInHierarchy) return;
-            StopAllCoroutines();
-            StartCoroutine(InvulnerablePor(tiempoInvulnerable));
-        }
+        EstaMuerto = true;
+        onMuerte?.Invoke();
     }
+    else if (tiempoInvulnerable > 0f)
+    {
+        if (!gameObject.activeInHierarchy) return;
+        StopAllCoroutines();
+        StartCoroutine(InvulnerablePor(tiempoInvulnerable));
+    }
+}
+
+// Nueva versión filtrando por tag
+public void RecibirDanio(int cantidad, Collider2D fuente)
+{
+    if (fuente == null || !fuente.CompareTag("Enemy")) return;
+    RecibirDanio(cantidad);
+}
+
 
     public void Curar(int cantidad)
     {

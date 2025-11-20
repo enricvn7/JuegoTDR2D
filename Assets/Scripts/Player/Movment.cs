@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private bool isGrounded = false;
-    private bool facingRight = true;
+    public bool facingRight = true;
     private bool isTouchingCeiling = false;
 
     [Header("Animación")]
@@ -33,6 +33,8 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask wallMask;
     public float wallCheckDistance = 0.3f;
     public float wallPushForce = 3f;
+
+    private bool infiniteJump = false;
 
     void Start()
     {
@@ -53,13 +55,16 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
         // --- Salto y doble salto ---
-        if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumps)
-            if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumps && !isTouchingCeiling)
-            {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); // reinicia la velocidad vertical para consistencia
-                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-                jumpCount++;
-            }
+        if (Input.GetKeyDown(KeyCode.Space) && (jumpCount < maxJumps || infiniteJump) && !isTouchingCeiling)
+{
+    rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); // reinicia velocidad vertical
+    rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+
+    if (!infiniteJump)
+        jumpCount++;
+}
+
+
 
         // --- Flip del sprite ---
         if (moveInput > 0 && !facingRight) Flip();
@@ -186,6 +191,19 @@ private IEnumerator KnockbackCoroutine(Vector2 direction, float force)
     // Pequeño delay antes de devolver control
     yield return new WaitForSeconds(0.15f);
 }
+
+public void StartInfiniteJump(float duration)
+    {
+        if (!infiniteJump)
+            StartCoroutine(InfiniteJumpCoroutine(duration));
+    }
+
+    private System.Collections.IEnumerator InfiniteJumpCoroutine(float duration)
+    {
+        infiniteJump = true;
+        yield return new WaitForSeconds(duration);
+        infiniteJump = false;
+    }
 
 }
 

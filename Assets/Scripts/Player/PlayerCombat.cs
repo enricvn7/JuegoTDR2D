@@ -3,11 +3,13 @@ using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
 {
+    [Header("Inputs & timings")]
     public KeyCode attackKey = KeyCode.Return;
-    public float attackDuration = 0.2f;
-    public float attackCooldown = 0.4f;
+    public float attackDuration = 0.2f;   // tiempo que el hitbox permanece activo
+    public float attackCooldown = 0.4f;   // tiempo entre ataques
 
-    [SerializeField] private GameObject attackHitbox;
+    [Header("References")]
+    [SerializeField] private Collider2D attackHitbox; // asignar el collider del hitbox
 
     private bool canAttack = true;
     private Animator animator;
@@ -15,7 +17,8 @@ public class PlayerCombat : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        Debug.Log("[PlayerCombat] Awake. Animator = " + animator);
+        if (attackHitbox != null)
+            attackHitbox.enabled = false; // empezar desactivado
     }
 
     private void Update()
@@ -52,7 +55,7 @@ public class PlayerCombat : MonoBehaviour
 
         if (attackHitbox != null)
         {
-            attackHitbox.SetActive(true);
+            attackHitbox.enabled = true;
             Debug.Log("[PlayerCombat] Hitbox ACTIVADA");
         }
         else
@@ -64,7 +67,7 @@ public class PlayerCombat : MonoBehaviour
 
         if (attackHitbox != null)
         {
-            attackHitbox.SetActive(false);
+            attackHitbox.enabled = false;
             Debug.Log("[PlayerCombat] Hitbox DESACTIVADA");
         }
 
@@ -74,8 +77,18 @@ public class PlayerCombat : MonoBehaviour
             Debug.Log("[PlayerCombat] isAttacking = false");
         }
 
+        // cooldown
         yield return new WaitForSeconds(attackCooldown);
         canAttack = true;
         Debug.Log("[PlayerCombat] Fin de ataque, listo para otro");
+    }
+
+    // Opcional: métodos para usar con Animation Events (ver sección más abajo)
+    public void EnableHitbox() {
+        if (attackHitbox != null) attackHitbox.enabled = true;
+    }
+
+    public void DisableHitbox() {
+        if (attackHitbox != null) attackHitbox.enabled = false;
     }
 }
