@@ -50331,6 +50331,7 @@ MonoBehaviour:
   dashSpeed: 35
   dashDuration: 0.2
   dashCooldown: 0.2
+  knockbackRecoverTime: 0.15
   maxJumps: 2
   facingRight: 1
   wallMask:
@@ -50800,7 +50801,7 @@ MonoBehaviour:
   damage: 1
   attackCooldown: 0.75
   contactDamageRadius: 0.4
-  knockbackForceToPlayer: 6
+  knockbackForceToPlayer: 20
   knockbackForceToBoar: 2
 --- !u!95 &1776784462
 Animator:
@@ -50986,7 +50987,7 @@ MonoBehaviour:
   vidaActual: 0
   rb: {fileID: 1776784464}
   knockbackForce: 10
-  knockbackDuration: 0.2
+  knockbackDuration: 0.3
 --- !u!114 &1776784469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51004,7 +51005,7 @@ MonoBehaviour:
   targetLayers:
     serializedVersion: 2
     m_Bits: 8
-  knockbackForceToPlayer: 6
+  knockbackForceToPlayer: 50
 --- !u!1 &1815785436
 GameObject:
   m_ObjectHideFlags: 0

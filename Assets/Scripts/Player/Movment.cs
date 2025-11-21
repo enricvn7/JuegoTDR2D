@@ -16,6 +16,10 @@ public class PlayerMovement : MonoBehaviour
     private bool isDashing = false;
     private bool canDash = true;
 
+    [Header("Knockback")]
+    public float knockbackRecoverTime = 0.15f;
+    private bool isKnockbackActive = false;
+
     [Header("Doble Salto")]
     public int maxJumps = 2; // número total de saltos (2 = doble salto)
     private int jumpCount = 0;
@@ -43,7 +47,13 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void Update()
-    {
+    {   
+
+        if (isKnockbackActive)
+        {
+            UpdateAnimatorParameters(Mathf.Abs(rb.linearVelocity.x));
+            return;
+        }
 
         if (isDashing) return;
 
@@ -56,13 +66,13 @@ public class PlayerMovement : MonoBehaviour
 
         // --- Salto y doble salto ---
         if (Input.GetKeyDown(KeyCode.Space) && (jumpCount < maxJumps || infiniteJump) && !isTouchingCeiling)
-{
-    rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); // reinicia velocidad vertical
-    rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); // reinicia velocidad vertical
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
-    if (!infiniteJump)
-        jumpCount++;
-}
+            if (!infiniteJump)
+                jumpCount++;
+        }
 
 
 
@@ -71,21 +81,17 @@ public class PlayerMovement : MonoBehaviour
         else if (moveInput < 0 && facingRight) Flip();
 
         // --- Dash ---
-        if (Input.GetKeyDown(KeyCode.F) && canDash)
-            if (Input.GetKeyDown(KeyCode.F) && canDash && !isTouchingCeiling)
-            {
-                StartCoroutine(DoDash());
-            }
+        if (Input.GetKeyDown(KeyCode.F) && canDash && !isTouchingCeiling)
+        {
+            StartCoroutine(DoDash());
+        }
 
         // --- Wall Stuck Fix ---
         CheckWallStuck(moveInput);
 
         // --- Animaciones ---
         float speed = Mathf.Abs(moveInput);
-        animator.SetFloat("Speed", speed);
-        animator.SetBool("isJumping", !isGrounded);
-        animator.SetBool("isGrounded", isGrounded);
-        animator.SetBool("isDashing", isDashing);
+        UpdateAnimatorParameters(speed);
     }
 
     void Flip()
@@ -176,23 +182,29 @@ public class PlayerMovement : MonoBehaviour
         return false;
     }
     public void ApplyKnockback(Vector2 direction, float force)
-{
-    StartCoroutine(KnockbackCoroutine(direction, force));
-}
+    {
+        StartCoroutine(KnockbackCoroutine(direction, force));
+    }
 
-private IEnumerator KnockbackCoroutine(Vector2 direction, float force)
-{
-    // Cancelar dash si está activo (opcional)
-    isDashing = false;
+    private IEnumerator KnockbackCoroutine(Vector2 direction, float force)
+    {
+        // Cancelar dash si está activo (opcional)
+        isDashing = false;
 
-    // Aplicar velocidad de knockback
-    rb.linearVelocity = new Vector2(direction.x * force, direction.y * (force / 2f));
+        isKnockbackActive = true;
 
-    // Pequeño delay antes de devolver control
-    yield return new WaitForSeconds(0.15f);
-}
+        // Aplicar velocidad de knockback
+        Vector2 knockDirection = direction.sqrMagnitude > 0f ? direction.normalized : Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
+        rb.AddForce(new Vector2(knockDirection.x * force, knockDirection.y * force * 0.5f), ForceMode2D.Impulse);
 
-public void StartInfiniteJump(float duration)
+        // Pequeño delay antes de devolver control
+        yield return new WaitForSeconds(knockbackRecoverTime);
+
+        isKnockbackActive = false;
+    }
+
+    public void StartInfiniteJump(float duration)
     {
         if (!infiniteJump)
             StartCoroutine(InfiniteJumpCoroutine(duration));
@@ -203,6 +215,14 @@ public void StartInfiniteJump(float duration)
         infiniteJump = true;
         yield return new WaitForSeconds(duration);
         infiniteJump = false;
+    }
+
+    private void UpdateAnimatorParameters(float speed)
+    {
+        animator.SetFloat("Speed", speed);
+        animator.SetBool("isJumping", !isGrounded);
+        animator.SetBool("isGrounded", isGrounded);
+        animator.SetBool("isDashing", isDashing);
     }
 
 }
