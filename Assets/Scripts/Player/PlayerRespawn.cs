@@ -60,4 +60,11 @@ public class PlayerRespawn : MonoBehaviour
         if (col != null) col.enabled = true;
         if (sr != null) sr.enabled = true;
     }
+
+    public void SetRespawnPoint(Transform newPoint)
+{
+    respawnPoint = newPoint;
+    Debug.Log("Nuevo checkpoint asignado: " + newPoint.name);
+}
+
 }
