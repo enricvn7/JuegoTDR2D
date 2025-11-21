@@ -50986,7 +50986,7 @@ MonoBehaviour:
   vidaMax: 3
   vidaActual: 0
   rb: {fileID: 1776784464}
-  knockbackForce: 10
+  knockbackForce: 20
   knockbackDuration: 0.3
 --- !u!114 &1776784469
 MonoBehaviour:
