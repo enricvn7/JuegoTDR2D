@@ -40,10 +40,13 @@ public class PlayerMovement : MonoBehaviour
 
     private bool infiniteJump = false;
 
+    private SpriteRenderer spriteRenderer;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -97,12 +100,11 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void Flip()
-    {
-        facingRight = !facingRight;
-        Vector3 escala = transform.localScale;
-        escala.x *= -1;
-        transform.localScale = escala;
-    }
+{
+    facingRight = !facingRight;
+    spriteRenderer.flipX = !spriteRenderer.flipX;
+}
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
