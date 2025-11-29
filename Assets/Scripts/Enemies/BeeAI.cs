@@ -6,7 +6,7 @@ public class BeeAI : MonoBehaviour
 {
     [Header("Referencias")]
     public Transform player;
-    Vida playerVida;                 
+    Vida playerVida;
     Rigidbody2D rb;
     Animator anim;
     SpriteRenderer sr;
@@ -14,18 +14,24 @@ public class BeeAI : MonoBehaviour
     [Header("Movimiento")]
     public float patrolSpeed = 1.5f;
     public float chaseSpeed = 3f;
-    public float patrolRadius = 3f;          
-    public float waypointChangeTime = 2.5f;  
+    public float patrolRadius = 3f;
+    public float waypointChangeTime = 2.5f;
 
     [Header("Detección")]
-    public float detectionRadius = 5f;       
-    public LayerMask lineOfSightMask;       
+    public float detectionRadius = 5f;
+    public LayerMask lineOfSightMask;
 
     [Header("Ataque")]
     public int damage = 1;
     public float attackCooldown = 0.75f;
-    public float contactDamageRadius = 0.4f; 
+    public float contactDamageRadius = 0.4f;
     float nextAttackTime = 0f;
+
+    [Header("Knockback")]
+    public float knockbackForce = 5f;
+    public float knockbackDuration = 0.15f;
+    bool isKnockback = false;
+    float knockbackEndTime = 0f;
 
     Vector2 startPos;
     Vector2 patrolTarget;
@@ -35,7 +41,7 @@ public class BeeAI : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        sr  = GetComponent<SpriteRenderer>();
+        sr = GetComponent<SpriteRenderer>();
         startPos = transform.position;
 
         if (player == null)
@@ -53,12 +59,20 @@ public class BeeAI : MonoBehaviour
     void Update()
     {
         if (rb.linearVelocity.x != 0) sr.flipX = rb.linearVelocity.x < 0;
-
         if (anim) anim.SetFloat("Speed", rb.linearVelocity.magnitude);
     }
 
     void FixedUpdate()
     {
+        // 🔥 BLOQUEO DE IA DURANTE EL KNOCKBACK
+        if (isKnockback)
+        {
+            if (Time.time >= knockbackEndTime)
+                isKnockback = false;
+            else
+                return;
+        }
+
         if (player == null)
         {
             Patrol();
@@ -107,7 +121,7 @@ public class BeeAI : MonoBehaviour
 
     bool HasLineOfSight()
     {
-        if (lineOfSightMask == 0) return true; 
+        if (lineOfSightMask == 0) return true;
         Vector2 dir = (player.position - transform.position);
         var hit = Physics2D.Raycast(transform.position, dir.normalized, dir.magnitude, lineOfSightMask);
         return hit.collider == null;
@@ -118,7 +132,7 @@ public class BeeAI : MonoBehaviour
         if (Time.time < nextAttackTime || player == null) return;
 
         Collider2D hit = Physics2D.OverlapCircle(transform.position, contactDamageRadius,
-            LayerMask.GetMask("Default", "Player")); 
+            LayerMask.GetMask("Default", "Player"));
 
         if (hit != null)
         {
@@ -127,19 +141,17 @@ public class BeeAI : MonoBehaviour
             {
                 nextAttackTime = Time.time + attackCooldown;
                 vida.RecibirDanio(damage);
-
             }
         }
     }
 
-    void OnDrawGizmosSelected()
+    public void ApplyKnockback(Vector2 sourcePosition)
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, contactDamageRadius);
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(Application.isPlaying ? (Vector3)startPos : transform.position, patrolRadius);
+        isKnockback = true;
+        knockbackEndTime = Time.time + knockbackDuration;
+
+        Vector2 dir = ((Vector2)transform.position - sourcePosition).normalized;
+        rb.linearVelocity = dir * knockbackForce;
     }
 
     void OnTriggerStay2D(Collider2D other)
@@ -152,7 +164,6 @@ public class BeeAI : MonoBehaviour
             vida.RecibirDanio(damage);
             nextAttackTime = Time.time + attackCooldown;
         }
-
     }
 
     Vida GetVidaFromCollider(Collider2D col)
@@ -172,5 +183,4 @@ public class BeeAI : MonoBehaviour
 
         return vida;
     }
-    
 }
