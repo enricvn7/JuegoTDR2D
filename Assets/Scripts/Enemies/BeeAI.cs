@@ -25,6 +25,7 @@ public class BeeAI : MonoBehaviour
     public int damage = 1;
     public float attackCooldown = 0.75f;
     public float contactDamageRadius = 0.4f;
+    public float knockbackForceToPlayer = 13f;
     float nextAttackTime = 0f;
 
     [Header("Knockback")]
@@ -64,7 +65,6 @@ public class BeeAI : MonoBehaviour
 
     void FixedUpdate()
     {
-        // 🔥 BLOQUEO DE IA DURANTE EL KNOCKBACK
         if (isKnockback)
         {
             if (Time.time >= knockbackEndTime)
@@ -140,7 +140,8 @@ public class BeeAI : MonoBehaviour
             if (vida != null && vida == playerVida)
             {
                 nextAttackTime = Time.time + attackCooldown;
-                vida.RecibirDanio(damage);
+                Vector2 knockbackDir = (player.position - transform.position).normalized;
+                vida.RecibirDanio(damage, knockbackDir, knockbackForceToPlayer);
             }
         }
     }
@@ -161,7 +162,8 @@ public class BeeAI : MonoBehaviour
         var vida = GetVidaFromCollider(other);
         if (vida != null && vida == playerVida)
         {
-            vida.RecibirDanio(damage);
+            Vector2 knockbackDir = (player.position - transform.position).normalized;
+            vida.RecibirDanio(damage, knockbackDir, knockbackForceToPlayer);
             nextAttackTime = Time.time + attackCooldown;
         }
     }

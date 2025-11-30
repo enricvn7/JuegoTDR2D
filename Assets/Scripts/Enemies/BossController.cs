@@ -13,8 +13,11 @@ public class BossController : MonoBehaviour
     EnemyHealth health;
     Vida playerVida;
 
+    [Header("Arena")]
+    public BossArenaWalls arenaWalls;   // <--- NUEVO
+
     [Header("Fases")]
-    [Range(0.1f, 0.9f)] public float porcentajeFase2 = 0.5f;
+    [Range(0.1f, 1f)] public float porcentajeFase2 = 0.5f;
     [Tooltip("Factor que reduce los tiempos cuando entra a fase 2 (menos es más rápido).")]
     public float multiplicadorFase2 = 0.75f;
     bool enFase2;
@@ -61,24 +64,28 @@ public class BossController : MonoBehaviour
 
     void Awake()
     {
-    rb = GetComponent<Rigidbody2D>();
-    anim = GetComponent<Animator>();
-    sr = GetComponent<SpriteRenderer>();
-    health = GetComponent<EnemyHealth>();
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        sr = GetComponent<SpriteRenderer>();
+        health = GetComponent<EnemyHealth>();
 
-    // 1) Si no hay player asignado en el inspector, lo buscamos por tag
-    if (player == null)
-    {
-        var p = GameObject.FindGameObjectWithTag("Player");
-        if (p != null) player = p.transform;
-    }
+        // Intentar coger automáticamente el componente de arena si está en el mismo GameObject
+        if (arenaWalls == null)
+            arenaWalls = GetComponent<BossArenaWalls>();
 
-    // 2) Si hemos encontrado player, guardamos su Vida
-    if (player != null)
-    {
-        playerVida = player.GetComponent<Vida>();
+        // 1) Si no hay player asignado en el inspector, lo buscamos por tag
+        if (player == null)
+        {
+            var p = GameObject.FindGameObjectWithTag("Player");
+            if (p != null) player = p.transform;
+        }
+
+        // 2) Si hemos encontrado player, guardamos su Vida
+        if (player != null)
+        {
+            playerVida = player.GetComponent<Vida>();
+        }
     }
-}
 
     void Start()
     {
@@ -175,7 +182,7 @@ public class BossController : MonoBehaviour
             yield return null;
         }
 
-        IntentarDaniarJugador(danoSalto, radioGolpeSalto, rb.position);
+        
     }
 
     IEnumerator PatronProyectiles()
@@ -244,6 +251,41 @@ public class BossController : MonoBehaviour
         }
     }
 
+    void OnCollisionEnter2D(Collision2D collision) => DanarPorContacto(collision.collider, ObtenerPuntoContacto(collision));
+
+    void OnCollisionStay2D(Collision2D collision) => DanarPorContacto(collision.collider, ObtenerPuntoContacto(collision));
+
+    void OnTriggerEnter2D(Collider2D other) => DanarPorContacto(other, other.transform.position);
+
+    void OnTriggerStay2D(Collider2D other) => DanarPorContacto(other, other.transform.position);
+
+    void DanarPorContacto(Collider2D objetivo, Vector2 centroDanio)
+    {
+        if (Time.timeScale == 0f || objetivo == null)
+            return;
+
+        if ((capasDanio.value & (1 << objetivo.gameObject.layer)) == 0)
+            return;
+
+        var vida = ObtenerVida(objetivo);
+        if (vida == null || vida != playerVida)
+            return;
+
+        Vector2 knockDir = ((Vector2)objetivo.transform.position - centroDanio).normalized;
+        if (knockDir == Vector2.zero)
+            knockDir = Vector2.up;
+
+        vida.RecibirDanio(danoContacto, knockDir, knockbackFuerza);
+    }
+
+    static Vector2 ObtenerPuntoContacto(Collision2D collision)
+    {
+        if (collision == null || collision.contactCount == 0)
+            return collision != null ? (Vector2)collision.transform.position : Vector2.zero;
+
+        return collision.GetContact(0).point;
+    }
+
     Vida ObtenerVida(Collider2D col)
     {
         if (col == null) return null;
@@ -268,6 +310,12 @@ public class BossController : MonoBehaviour
 
     public void Morir()
     {
+        // <<< NUEVO: abrir la arena al morir >>>
+        if (arenaWalls != null)
+        {
+            arenaWalls.LiberarArena();
+        }
+
         // Lanzar animación de muerte
         if (anim != null)
             anim.SetTrigger("Death");   // Debes tener un Trigger "Death" en el Animator
